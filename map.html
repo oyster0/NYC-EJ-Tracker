@@ -6,6 +6,7 @@
   <title>Borough Map — NYC Environmental Justice Community Engagement Tool</title>
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/map.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 </head>
 <body>
 
@@ -31,56 +32,14 @@
   </header>
 
   <section class="page-hero">
-    <h1>Five Boroughs Map</h1>
-    <p>Click a borough to explore its environmental justice issues and related news.</p>
+    <div class="page-hero-inner">
+      <h1>EJ Stories & Events Map</h1>
+      <p>Green circles mark news articles. Amber squares mark upcoming events. Click any pin to see details.</p>
+    </div>
   </section>
 
-  <main class="page-content">
-    <div class="map-layout">
-
-      <!-- Borough legend -->
-      <aside>
-        <div class="borough-panel">
-          <h2>Boroughs</h2>
-          <div class="borough-btn-list" id="borough-btn-list"></div>
-        </div>
-      </aside>
-
-      <!-- Map + info -->
-      <section>
-        <div class="map-container">
-          <svg id="nyc-map"
-               viewBox="130 30 410 410"
-               aria-label="Map of NYC five boroughs"
-               role="img">
-            <!-- Borough paths are injected by map.js -->
-          </svg>
-
-          <div class="map-legend">
-            <span class="map-legend-item">
-              <span class="map-legend-dot" style="background:#ff9800"></span> Bronx
-            </span>
-            <span class="map-legend-item">
-              <span class="map-legend-dot" style="background:#5c6bc0"></span> Brooklyn
-            </span>
-            <span class="map-legend-item">
-              <span class="map-legend-dot" style="background:#e91e63"></span> Manhattan
-            </span>
-            <span class="map-legend-item">
-              <span class="map-legend-dot" style="background:#00acc1"></span> Queens
-            </span>
-            <span class="map-legend-item">
-              <span class="map-legend-dot" style="background:#9c27b0"></span> Staten Island
-            </span>
-          </div>
-        </div>
-
-        <div class="map-info-panel" id="map-info" aria-live="polite">
-          <p>Click a borough to see related news and environmental context.</p>
-        </div>
-      </section>
-
-    </div>
+  <main>
+    <div id="map"></div>
   </main>
 
   <footer class="site-footer">
@@ -93,7 +52,9 @@
     </div>
   </footer>
 
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="data/news.js"></script>
+  <script src="data/events.js"></script>
   <script src="js/map.js"></script>
   <script src="js/nav.js"></script>
 </body>

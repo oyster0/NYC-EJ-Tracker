@@ -1,0 +1,88 @@
+// Edit this array to update events shown on the map and calendar.
+// lat/lng required for map pins. Omit (or set to null) for online-only events.
+const EJ_EVENTS = [
+  {
+    "id": 1,
+    "title": "Community Board Hearing: Newtown Creek Dredging Plan",
+    "date": "2026-05-14",
+    "time": "6:30 PM",
+    "location": "PS 111, Sunnyside, Queens",
+    "borough": "Queens",
+    "category": "Public Hearing",
+    "description": "CB2 Queens invites community comment on the EPA's proposed dredging schedule and disposal plan for contaminated sediments.",
+    "organizer": "EPA Region 2",
+    "rsvp": "#",
+    "lat": 40.7440,
+    "lng": -73.9205
+  },
+  {
+    "id": 2,
+    "title": "South Bronx Climate Resilience Town Hall",
+    "date": "2026-05-17",
+    "time": "2:00 PM",
+    "location": "Bronx Library Center, 310 E Kingsbridge Rd",
+    "borough": "Bronx",
+    "category": "Town Hall",
+    "description": "Discuss flood risk, extreme heat, and transportation with local elected officials and the Mayor's Office of Climate and Environmental Justice.",
+    "organizer": "SOBRO",
+    "rsvp": "#",
+    "lat": 40.8748,
+    "lng": -73.8975
+  },
+  {
+    "id": 3,
+    "title": "Red Hook Waterfront Cleanup & Planting Day",
+    "date": "2026-05-23",
+    "time": "9:00 AM",
+    "location": "Red Hook Park, Brooklyn",
+    "borough": "Brooklyn",
+    "category": "Volunteer",
+    "description": "Help remove debris and plant native shoreline species with the Red Hook Initiative and NYC Parks stewardship team. All ages welcome.",
+    "organizer": "Red Hook Initiative",
+    "rsvp": "#",
+    "lat": 40.6755,
+    "lng": -74.0168
+  },
+  {
+    "id": 4,
+    "title": "Know Your Rights: Environmental Permitting in NYC",
+    "date": "2026-05-28",
+    "time": "6:00 PM",
+    "location": "Online (Zoom)",
+    "borough": "All",
+    "category": "Workshop",
+    "description": "Environmental attorneys walk through how to comment on, challenge, or support permit applications for facilities in your neighborhood.",
+    "organizer": "Earthjustice NYC",
+    "rsvp": "#",
+    "lat": null,
+    "lng": null
+  },
+  {
+    "id": 5,
+    "title": "Staten Island Greenbelt Invasive Species Pull",
+    "date": "2026-06-01",
+    "time": "8:00 AM",
+    "location": "Greenbelt Nature Center, Staten Island",
+    "borough": "Staten Island",
+    "category": "Volunteer",
+    "description": "Join NYC Parks rangers for a morning of hands-on habitat restoration. Gloves, tools, and refreshments provided.",
+    "organizer": "NYC Parks",
+    "rsvp": "#",
+    "lat": 40.5795,
+    "lng": -74.1502
+  },
+  {
+    "id": 6,
+    "title": "East Harlem Heat Vulnerability Forum",
+    "date": "2026-06-05",
+    "time": "5:30 PM",
+    "location": "La Marqueta, 1590 Park Ave, Manhattan",
+    "borough": "Manhattan",
+    "category": "Town Hall",
+    "description": "Community health workers and climate scientists present findings on urban heat island impacts and co-design cooling center strategies.",
+    "organizer": "WE ACT for Environmental Justice",
+    "rsvp": "#",
+    "lat": 40.7956,
+    "lng": -73.9399
+  }
+];
