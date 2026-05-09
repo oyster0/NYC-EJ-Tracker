@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NYC Environmental Justice Community Engagement Tool</title>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/home.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="masthead-inner">
+      <div class="masthead-brand">
+        <div class="site-name">NYC Environmental Justice Community Engagement Tool</div>
+        <div class="site-tagline">This site provides a weekly roundup of environmental justice news articles and events across the five boroughs</div>
+      </div>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="index.html" class="active">News</a>
+        <a href="map.html">Map</a>
+        <a href="calendar.html">Calendar</a>
+      </nav>
+      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <section class="digest" aria-label="This Week in EJ">
+
+      <div class="section-rule">
+        <h2>This Week in EJ</h2>
+        <span class="rule-meta" id="digest-meta"></span>
+      </div>
+
+      <div class="weekly-summary">
+        <div class="weekly-summary-label">This week at a glance</div>
+        <p>This week's stories span all five boroughs and reflect the breadth of environmental justice challenges facing New York City communities. In the Bronx, residents are pushing back against diesel truck pollution near Hunts Point while a separate deal moves three aging peaker plants closer to retirement. Brooklyn's Red Hook neighborhood remains exposed ahead of hurricane season as its long-promised flood barrier stalls, and federal regulators are pressing for faster action on the Gowanus Canal Superfund cleanup. Meanwhile, a proposed data center in West Harlem is drawing fierce opposition from environmental advocates, and Queens residents turned out in force to contest a waste transfer station permit renewal in Maspeth.</p>
+      </div>
+
+      <div class="cards-grid" id="cards-grid"></div>
+
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div>
+      <strong style="color:rgba(255,255,255,.75)">NYC Environmental Justice Community Engagement Tool</strong><br>
+      Tracking environmental justice across New York City's five boroughs.
+      Data sourced from local newsrooms and community organizations.
+      &nbsp;·&nbsp; <a href="map.html">Map</a>
+      &nbsp;·&nbsp; <a href="calendar.html">Calendar</a>
+    </div>
+  </footer>
+
+  <script src="data/news.js"></script>
+  <script src="js/home.js"></script>
+  <script src="js/nav.js"></script>
+</body>
+</html>

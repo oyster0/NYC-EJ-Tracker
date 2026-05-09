@@ -1,0 +1,140 @@
+/* ── Map page layout ────────────────────────────────────────── */
+.map-layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+@media (max-width: 760px) {
+  .map-layout { grid-template-columns: 1fr; }
+}
+
+/* ── Borough legend panel ───────────────────────────────────── */
+.borough-panel {
+  background: var(--white);
+  border: 1px solid var(--neutral-200);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.borough-panel h2 {
+  font-size: .9rem;
+  font-weight: 700;
+  color: var(--white);
+  background: var(--green-700);
+  padding: .7rem 1rem;
+  letter-spacing: .03em;
+}
+
+.borough-btn-list { display: flex; flex-direction: column; }
+
+.borough-btn {
+  display: flex;
+  align-items: center;
+  gap: .7rem;
+  padding: .75rem 1rem;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: .9rem;
+  color: var(--neutral-700);
+  border-bottom: 1px solid var(--neutral-200);
+  width: 100%;
+  text-align: left;
+  transition: background var(--transition);
+}
+
+.borough-btn:last-child { border-bottom: none; }
+.borough-btn:hover { background: var(--neutral-100); }
+.borough-btn.active { background: var(--green-100); color: var(--green-900); font-weight: 600; }
+
+.borough-btn .swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.borough-btn .count {
+  margin-left: auto;
+  font-size: .75rem;
+  background: var(--neutral-200);
+  border-radius: 99px;
+  padding: .1rem .45rem;
+  color: var(--neutral-700);
+}
+
+.borough-btn.active .count { background: var(--green-500); color: var(--white); }
+
+/* ── SVG map container ──────────────────────────────────────── */
+.map-container {
+  background: var(--white);
+  border: 1px solid var(--neutral-200);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  padding: 1rem;
+}
+
+.map-container svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Borough path fills */
+.borough-path {
+  stroke: var(--white);
+  stroke-width: 2;
+  cursor: pointer;
+  transition: opacity var(--transition), filter var(--transition);
+}
+
+.borough-path:hover { filter: brightness(.88); }
+.borough-path.dimmed { opacity: .35; }
+.borough-path.active { filter: brightness(.92); stroke-width: 3; }
+
+.borough-path.bronx    { fill: #ff9800; }
+.borough-path.brooklyn { fill: #5c6bc0; }
+.borough-path.manhattan{ fill: #e91e63; }
+.borough-path.queens   { fill: #00acc1; }
+.borough-path.staten   { fill: #9c27b0; }
+
+/* ── Info panel below map ───────────────────────────────────── */
+.map-info-panel {
+  margin-top: 1rem;
+  padding: 1rem 1.1rem;
+  background: var(--sky);
+  border-radius: var(--radius);
+  border: 1px solid var(--water-100);
+  min-height: 90px;
+}
+
+.map-info-panel h3 { font-size: 1rem; font-weight: 700; color: var(--green-900); margin-bottom: .4rem; }
+.map-info-panel p  { font-size: .88rem; color: var(--neutral-700); }
+
+.map-info-panel .news-links { margin-top: .7rem; display: flex; flex-direction: column; gap: .4rem; }
+.map-info-panel .news-links a { font-size: .85rem; color: var(--water-500); }
+.map-info-panel .news-links a::before { content: "→ "; }
+
+/* ── Map legend ─────────────────────────────────────────────── */
+.map-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .75rem 1.5rem;
+  margin-top: 1rem;
+  padding-top: .75rem;
+  border-top: 1px solid var(--neutral-200);
+  font-size: .8rem;
+  color: var(--neutral-500);
+}
+
+.map-legend-item { display: flex; align-items: center; gap: .4rem; }
+
+.map-legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}

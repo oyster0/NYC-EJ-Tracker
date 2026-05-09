@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Events Calendar — NYC EJ Tracker</title>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/home.css">
+  <link rel="stylesheet" href="css/calendar.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="masthead-inner">
+      <div class="masthead-brand">
+        <div class="site-name">NYC Environmental Justice Community Engagement Tool</div>
+        <div class="site-tagline">This site provides a weekly roundup of environmental justice news articles and events across the five boroughs</div>
+      </div>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="index.html">News</a>
+        <a href="map.html">Map</a>
+        <a href="calendar.html" class="active">Calendar</a>
+      </nav>
+      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <section class="page-hero">
+    <h1>Events Calendar</h1>
+    <p>Public hearings, volunteer days, town halls, and workshops across NYC's environmental justice communities.</p>
+  </section>
+
+  <main class="page-content">
+
+    <!-- Category filters -->
+    <div class="cal-filters" id="cal-filter-bar" role="group" aria-label="Filter by event type"></div>
+
+    <div class="cal-layout">
+
+      <!-- Calendar grid -->
+      <section>
+        <div class="calendar-wrap">
+          <div class="cal-nav">
+            <button class="cal-nav-btn" id="cal-prev" aria-label="Previous month">&#8249;</button>
+            <h2 id="cal-month-label">Loading…</h2>
+            <button class="cal-nav-btn" id="cal-next" aria-label="Next month">&#8250;</button>
+          </div>
+          <div class="cal-grid" id="cal-grid-headers">
+            <div class="cal-day-header">Sun</div>
+            <div class="cal-day-header">Mon</div>
+            <div class="cal-day-header">Tue</div>
+            <div class="cal-day-header">Wed</div>
+            <div class="cal-day-header">Thu</div>
+            <div class="cal-day-header">Fri</div>
+            <div class="cal-day-header">Sat</div>
+          </div>
+          <div class="cal-grid" id="cal-grid" aria-label="Calendar grid"></div>
+        </div>
+      </section>
+
+      <!-- Event list -->
+      <aside>
+        <div class="event-panel">
+          <div class="event-panel-header">All Events</div>
+          <div id="event-list" aria-live="polite">
+            <p style="color:#666;font-size:.9rem">Loading events…</p>
+          </div>
+        </div>
+      </aside>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    NYC Environmental Justice Tracker &mdash; Built for community, by community.
+  </footer>
+
+  <script type="module" src="js/calendar.js"></script>
+  <script src="js/nav.js"></script>
+</body>
+</html>

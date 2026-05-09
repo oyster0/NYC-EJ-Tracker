@@ -1,0 +1,9 @@
+# macOS
+.DS_Store
+
+# Editor folders
+.vscode/
+.idea/
+
+# Local server config (not needed in the repo)
+.claude/

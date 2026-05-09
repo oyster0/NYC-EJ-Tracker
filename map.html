@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Borough Map — NYC EJ Tracker</title>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/map.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="masthead-inner">
+      <div class="masthead-brand">
+        <div class="site-name">NYC Environmental Justice Community Engagement Tool</div>
+        <div class="site-tagline">This site provides a weekly roundup of environmental justice news articles and events across the five boroughs</div>
+      </div>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="index.html">News</a>
+        <a href="map.html" class="active">Map</a>
+        <a href="calendar.html">Calendar</a>
+      </nav>
+      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <section class="page-hero">
+    <h1>Five Boroughs Map</h1>
+    <p>Click a borough to explore its environmental justice issues and related news.</p>
+  </section>
+
+  <main class="page-content">
+    <div class="map-layout">
+
+      <!-- Borough legend -->
+      <aside>
+        <div class="borough-panel">
+          <h2>Boroughs</h2>
+          <div class="borough-btn-list" id="borough-btn-list"></div>
+        </div>
+      </aside>
+
+      <!-- Map + info -->
+      <section>
+        <div class="map-container">
+          <svg id="nyc-map"
+               viewBox="130 30 410 410"
+               aria-label="Map of NYC five boroughs"
+               role="img">
+            <!-- Borough paths are injected by map.js -->
+          </svg>
+
+          <div class="map-legend">
+            <span class="map-legend-item">
+              <span class="map-legend-dot" style="background:#ff9800"></span> Bronx
+            </span>
+            <span class="map-legend-item">
+              <span class="map-legend-dot" style="background:#5c6bc0"></span> Brooklyn
+            </span>
+            <span class="map-legend-item">
+              <span class="map-legend-dot" style="background:#e91e63"></span> Manhattan
+            </span>
+            <span class="map-legend-item">
+              <span class="map-legend-dot" style="background:#00acc1"></span> Queens
+            </span>
+            <span class="map-legend-item">
+              <span class="map-legend-dot" style="background:#9c27b0"></span> Staten Island
+            </span>
+          </div>
+        </div>
+
+        <div class="map-info-panel" id="map-info" aria-live="polite">
+          <p>Click a borough to see related news and environmental context.</p>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    NYC Environmental Justice Tracker &mdash; Built for community, by community.
+  </footer>
+
+  <script type="module" src="js/map.js"></script>
+  <script src="js/nav.js"></script>
+</body>
+</html>

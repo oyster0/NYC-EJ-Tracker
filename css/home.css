@@ -1,0 +1,177 @@
+/* ── Digest section ─────────────────────────────────────────── */
+.digest {
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding: 2.25rem 1.5rem 3rem;
+}
+
+/* ── Weekly summary block ───────────────────────────────────── */
+.weekly-summary {
+  background: var(--mint);
+  border-left: 4px solid var(--forest);
+  padding: 1.1rem 1.4rem;
+  margin-bottom: 1.75rem;
+}
+
+.weekly-summary-label {
+  font-size: .68rem;
+  font-weight: 800;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--moss);
+  margin-bottom: .45rem;
+}
+
+.weekly-summary p {
+  font-size: .95rem;
+  color: var(--charcoal);
+  line-height: 1.7;
+}
+
+/* ── Cards grid ─────────────────────────────────────────────── */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+}
+
+/* Featured card spans both columns */
+.news-card--featured {
+  grid-column: 1 / -1;
+}
+
+/* ── Base card ──────────────────────────────────────────────── */
+.news-card {
+  background: var(--white);
+  border: 1px solid var(--silver);
+  border-radius: var(--radius-lg);
+  padding: 1.4rem 1.5rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition), transform var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.news-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+}
+
+/* Borough accent stripe — top of card */
+.news-card[data-borough="Bronx"]::before        { background: var(--bronx); }
+.news-card[data-borough="Brooklyn"]::before     { background: var(--brooklyn); }
+.news-card[data-borough="Manhattan"]::before    { background: var(--manhattan); }
+.news-card[data-borough="Queens"]::before       { background: var(--queens); }
+.news-card[data-borough="Staten Island"]::before{ background: var(--staten); }
+
+.news-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-3px);
+}
+
+/* ── Card meta row (badges + date) ──────────────────────────── */
+.card-meta {
+  display: flex;
+  align-items: center;
+  gap: .45rem;
+  flex-wrap: wrap;
+  margin-bottom: .8rem;
+}
+
+.card-date {
+  margin-left: auto;
+  font-size: .72rem;
+  color: var(--stone);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* ── Headline ────────────────────────────────────────────────── */
+.news-card h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.35;
+  margin-bottom: .65rem;
+}
+
+.news-card--featured h3 {
+  font-size: 1.3rem;
+  letter-spacing: -.01em;
+}
+
+.news-card h3 a {
+  color: inherit;
+}
+
+.news-card h3 a:hover {
+  color: var(--moss);
+  text-decoration: none;
+}
+
+/* ── Summary ────────────────────────────────────────────────── */
+.news-card p {
+  font-size: .875rem;
+  color: var(--slate);
+  line-height: 1.6;
+  flex: 1;
+}
+
+.news-card--featured p {
+  font-size: .925rem;
+  max-width: 720px;
+}
+
+/* ── Card footer ─────────────────────────────────────────────── */
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 1rem;
+  padding-top: .8rem;
+  border-top: 1px solid var(--silver);
+}
+
+.card-source {
+  font-size: .78rem;
+  font-weight: 600;
+  color: var(--stone);
+  letter-spacing: .01em;
+}
+
+.card-readmore {
+  font-size: .8rem;
+  font-weight: 700;
+  color: var(--moss);
+  display: inline-flex;
+  align-items: center;
+  gap: .2rem;
+  transition: color var(--transition), gap var(--transition);
+}
+
+.card-readmore:hover {
+  color: var(--forest);
+  gap: .4rem;
+  text-decoration: none;
+}
+
+.card-readmore::after { content: '→'; }
+
+/* ── Responsive ─────────────────────────────────────────────── */
+@media (max-width: 680px) {
+  .cards-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .news-card--featured {
+    grid-column: 1;
+  }
+
+  .news-card--featured h3 { font-size: 1.15rem; }
+
+  .digest { padding: 1.5rem 1rem 2.5rem; }
+}

@@ -1,0 +1,212 @@
+/* ── Calendar page layout ───────────────────────────────────── */
+.cal-layout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 2rem;
+  align-items: start;
+}
+
+@media (max-width: 860px) {
+  .cal-layout { grid-template-columns: 1fr; }
+}
+
+/* ── Calendar grid ──────────────────────────────────────────── */
+.calendar-wrap {
+  background: var(--white);
+  border: 1px solid var(--neutral-200);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.cal-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: .9rem 1.1rem;
+  background: var(--green-900);
+  color: var(--white);
+}
+
+.cal-nav h2 { font-size: 1.05rem; font-weight: 700; }
+
+.cal-nav-btn {
+  background: none;
+  border: 1.5px solid rgba(255,255,255,.3);
+  border-radius: 6px;
+  color: var(--white);
+  font-size: 1rem;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background var(--transition);
+}
+
+.cal-nav-btn:hover { background: rgba(255,255,255,.15); }
+
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.cal-day-header {
+  text-align: center;
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--neutral-500);
+  padding: .5rem 0;
+  background: var(--neutral-100);
+  border-bottom: 1px solid var(--neutral-200);
+}
+
+.cal-cell {
+  min-height: 72px;
+  padding: .35rem .4rem;
+  border-right: 1px solid var(--neutral-200);
+  border-bottom: 1px solid var(--neutral-200);
+  vertical-align: top;
+  cursor: default;
+  transition: background var(--transition);
+}
+
+.cal-cell:nth-child(7n) { border-right: none; }
+
+.cal-cell.other-month { background: var(--neutral-100); }
+.cal-cell.other-month .cal-day-num { color: var(--neutral-200); }
+
+.cal-cell.today { background: var(--green-100); }
+.cal-cell.today .cal-day-num {
+  background: var(--green-700);
+  color: var(--white);
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cal-cell.has-events { cursor: pointer; }
+.cal-cell.has-events:hover { background: var(--sky); }
+
+.cal-day-num {
+  font-size: .8rem;
+  font-weight: 600;
+  color: var(--neutral-700);
+  margin-bottom: .25rem;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cal-event-dot {
+  font-size: .68rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: .1rem .3rem;
+  border-radius: 3px;
+  margin-bottom: .15rem;
+  color: var(--white);
+  background: var(--green-500);
+  max-width: 100%;
+}
+
+.cal-event-dot.volunteer { background: #388e3c; }
+.cal-event-dot.hearing   { background: #1565c0; }
+.cal-event-dot.town-hall { background: #6a1b9a; }
+.cal-event-dot.workshop  { background: #e65100; }
+
+/* ── Event list panel ───────────────────────────────────────── */
+.event-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.event-panel-header {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--green-900);
+  padding-bottom: .5rem;
+  border-bottom: 2px solid var(--green-500);
+}
+
+.event-card {
+  background: var(--white);
+  border: 1px solid var(--neutral-200);
+  border-radius: var(--radius);
+  padding: 1rem 1.1rem;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition);
+}
+
+.event-card:hover { box-shadow: var(--shadow-md); }
+
+.event-card-header {
+  display: flex;
+  gap: .6rem;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: .5rem;
+}
+
+.event-card h3 {
+  font-size: .95rem;
+  font-weight: 600;
+  color: var(--neutral-900);
+  margin-bottom: .35rem;
+  line-height: 1.35;
+}
+
+.event-card .event-meta {
+  font-size: .82rem;
+  color: var(--neutral-500);
+  display: flex;
+  flex-direction: column;
+  gap: .2rem;
+  margin-bottom: .6rem;
+}
+
+.event-card .event-meta span::before { margin-right: .35rem; }
+.event-meta .time::before   { content: "🕐"; }
+.event-meta .place::before  { content: "📍"; }
+.event-meta .org::before    { content: "🏢"; }
+
+.event-card p {
+  font-size: .84rem;
+  color: var(--neutral-700);
+  line-height: 1.5;
+  margin-bottom: .7rem;
+}
+
+.rsvp-btn {
+  display: inline-block;
+  background: var(--green-700);
+  color: var(--white);
+  padding: .35rem .85rem;
+  border-radius: var(--radius);
+  font-size: .82rem;
+  font-weight: 600;
+  transition: background var(--transition);
+}
+
+.rsvp-btn:hover { background: var(--green-900); text-decoration: none; }
+
+/* ── Filter pills ───────────────────────────────────────────── */
+.cal-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .4rem;
+  margin-bottom: 1rem;
+}
+
+/* reuse filter-btn from home.css via main.css import */

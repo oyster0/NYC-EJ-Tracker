@@ -1,0 +1,278 @@
+/* ── Reset & base ───────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  /* greens */
+  --forest:   #0c2818;
+  --pine:     #174d2e;
+  --moss:     #1e6b3a;
+  --leaf:     #2e9e50;
+  --mint:     #e8f5ec;
+  --mint-mid: #c8e6d0;
+
+  /* neutrals */
+  --ink:      #111816;
+  --charcoal: #2d3a32;
+  --slate:    #4a5c52;
+  --stone:    #7a8c82;
+  --silver:   #d4ddd8;
+  --cloud:    #f2f6f4;
+  --white:    #ffffff;
+
+  /* accents (borough colors) */
+  --bronx:    #d4660a;
+  --brooklyn: #3b4db5;
+  --manhattan:#b52060;
+  --queens:   #097b8a;
+  --staten:   #6b2d99;
+
+  --radius:      8px;
+  --radius-lg:   14px;
+  --shadow-sm:   0 1px 3px rgba(0,0,0,.09);
+  --shadow-md:   0 4px 16px rgba(0,0,0,.11);
+  --transition:  160ms ease;
+
+  --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --content-width: 1080px;
+}
+
+html { font-size: 16px; scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font);
+  color: var(--charcoal);
+  background: var(--cloud);
+  line-height: 1.65;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+a { color: var(--moss); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ── Site header / masthead ─────────────────────────────────── */
+.site-header {
+  background: var(--forest);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 3px solid var(--leaf);
+  box-shadow: 0 2px 12px rgba(0,0,0,.25);
+}
+
+.masthead-inner {
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding: .9rem 1.5rem .75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.masthead-brand { display: flex; flex-direction: column; gap: .15rem; }
+
+.site-name {
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -.025em;
+  color: var(--white);
+  line-height: 1;
+}
+
+.site-name em {
+  font-style: normal;
+  color: var(--leaf);
+}
+
+.site-tagline {
+  font-size: .75rem;
+  color: rgba(255,255,255,.52);
+  letter-spacing: .01em;
+}
+
+/* ── Site nav ───────────────────────────────────────────────── */
+.site-nav {
+  display: flex;
+  gap: .15rem;
+  flex-shrink: 0;
+}
+
+.site-nav a {
+  color: rgba(255,255,255,.75);
+  padding: .35rem .8rem;
+  border-radius: var(--radius);
+  font-size: .85rem;
+  font-weight: 500;
+  transition: background var(--transition), color var(--transition);
+}
+
+.site-nav a:hover { background: rgba(255,255,255,.1); color: var(--white); text-decoration: none; }
+.site-nav a.active { background: var(--moss); color: var(--white); }
+
+/* ── Hamburger button (mobile only) ─────────────────────────── */
+.nav-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  background: none;
+  border: 1.5px solid rgba(255,255,255,.3);
+  border-radius: var(--radius);
+  padding: .45rem .5rem;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.nav-toggle span {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: var(--white);
+  border-radius: 2px;
+  transition: transform 200ms ease, opacity 200ms ease;
+}
+
+/* Animate hamburger → X when menu is open */
+.site-header.nav-open .nav-toggle span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.site-header.nav-open .nav-toggle span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.site-header.nav-open .nav-toggle span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* ── Mobile nav ─────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .masthead-inner { padding: .75rem 1.1rem; gap: .75rem; }
+
+  .site-name { font-size: 1rem; line-height: 1.25; }
+  .site-tagline { display: none; }
+
+  /* Show hamburger, hide inline nav */
+  .nav-toggle { display: flex; }
+  .site-nav {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    gap: 0;
+    background: var(--pine);
+    border-bottom: 3px solid var(--leaf);
+    box-shadow: 0 6px 16px rgba(0,0,0,.3);
+    padding: .5rem .75rem .75rem;
+  }
+
+  /* Reveal nav when header has .nav-open class */
+  .site-header.nav-open .site-nav { display: flex; }
+
+  .site-nav a {
+    padding: .75rem .6rem;
+    font-size: .95rem;
+    border-bottom: 1px solid rgba(255,255,255,.08);
+    border-radius: 0;
+  }
+  .site-nav a:last-child { border-bottom: none; }
+}
+
+/* ── Footer ─────────────────────────────────────────────────── */
+.site-footer {
+  background: var(--forest);
+  color: rgba(255,255,255,.45);
+  text-align: center;
+  padding: 1.5rem;
+  font-size: .78rem;
+  margin-top: auto;
+  border-top: 3px solid var(--pine);
+  line-height: 1.8;
+}
+
+.site-footer a { color: rgba(255,255,255,.65); }
+.site-footer a:hover { color: var(--white); text-decoration: underline; }
+
+/* ── Page hero (map & calendar pages) ──────────────────────── */
+.page-hero {
+  background: var(--forest);
+  color: var(--white);
+  padding: 2.25rem 1.5rem 1.75rem;
+  border-bottom: 3px solid var(--leaf);
+}
+
+.page-hero-inner {
+  max-width: var(--content-width);
+  margin: 0 auto;
+}
+
+.page-hero h1 { font-size: 1.6rem; font-weight: 700; margin-bottom: .35rem; line-height: 1.2; }
+.page-hero p  { font-size: .95rem; color: rgba(255,255,255,.7); max-width: 560px; }
+
+/* ── Shared content wrapper ─────────────────────────────────── */
+.page-content {
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  width: 100%;
+}
+
+/* ── Borough pill ───────────────────────────────────────────── */
+.borough-pill {
+  display: inline-flex;
+  align-items: center;
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: .055em;
+  text-transform: uppercase;
+  padding: .18rem .55rem;
+  border-radius: 99px;
+  border: 1.5px solid currentColor;
+  opacity: .85;
+}
+
+.borough-pill.bronx     { color: var(--bronx);     background: #fff3ea; }
+.borough-pill.brooklyn  { color: var(--brooklyn);  background: #eceffe; }
+.borough-pill.manhattan { color: var(--manhattan); background: #fde9f1; }
+.borough-pill.queens    { color: var(--queens);    background: #e5f6f8; }
+.borough-pill.staten    { color: var(--staten);    background: #f3eafc; }
+.borough-pill.all       { color: var(--stone);     background: var(--cloud); }
+
+/* ── Category chip ──────────────────────────────────────────── */
+.category-chip {
+  display: inline-block;
+  font-size: .68rem;
+  font-weight: 500;
+  padding: .18rem .5rem;
+  border-radius: 4px;
+  background: var(--mint);
+  color: var(--pine);
+  border: 1px solid var(--mint-mid);
+}
+
+/* ── Shared section rule ────────────────────────────────────── */
+.section-rule {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: .6rem;
+  border-bottom: 2px solid var(--forest);
+}
+
+.section-rule h2 {
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--forest);
+}
+
+.section-rule .rule-meta {
+  font-size: .78rem;
+  color: var(--stone);
+}
+
+/* ── Responsive ─────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .site-name { font-size: 1.2rem; }
+  .site-tagline { display: none; }
+  .site-nav a { padding: .35rem .6rem; font-size: .8rem; }
+  .page-hero h1 { font-size: 1.3rem; }
+}
