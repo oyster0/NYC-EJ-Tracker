@@ -3,9 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Events Calendar — NYC EJ Tracker</title>
+  <title>Events Calendar — NYC Environmental Justice Community Engagement Tool</title>
   <link rel="stylesheet" href="css/main.css">
-  <link rel="stylesheet" href="css/home.css">
   <link rel="stylesheet" href="css/calendar.css">
 </head>
 <body>
@@ -32,56 +31,79 @@
   </header>
 
   <section class="page-hero">
-    <h1>Events Calendar</h1>
-    <p>Public hearings, volunteer days, town halls, and workshops across NYC's environmental justice communities.</p>
+    <div class="page-hero-inner">
+      <h1>Events Calendar</h1>
+      <p>Public hearings, volunteer days, town halls, and workshops across NYC's environmental justice communities.</p>
+    </div>
   </section>
 
-  <main class="page-content">
+  <main class="cal-page">
 
-    <!-- Category filters -->
-    <div class="cal-filters" id="cal-filter-bar" role="group" aria-label="Filter by event type"></div>
+    <!-- Monthly calendar grid -->
+    <div class="cal-wrap">
 
-    <div class="cal-layout">
+      <div class="cal-header">
+        <button class="cal-nav-btn" id="cal-prev" aria-label="Previous month">&#8249;</button>
+        <h2 id="cal-month-label"></h2>
+        <button class="cal-nav-btn" id="cal-next" aria-label="Next month">&#8250;</button>
+      </div>
 
-      <!-- Calendar grid -->
-      <section>
-        <div class="calendar-wrap">
-          <div class="cal-nav">
-            <button class="cal-nav-btn" id="cal-prev" aria-label="Previous month">&#8249;</button>
-            <h2 id="cal-month-label">Loading…</h2>
-            <button class="cal-nav-btn" id="cal-next" aria-label="Next month">&#8250;</button>
-          </div>
-          <div class="cal-grid" id="cal-grid-headers">
-            <div class="cal-day-header">Sun</div>
-            <div class="cal-day-header">Mon</div>
-            <div class="cal-day-header">Tue</div>
-            <div class="cal-day-header">Wed</div>
-            <div class="cal-day-header">Thu</div>
-            <div class="cal-day-header">Fri</div>
-            <div class="cal-day-header">Sat</div>
-          </div>
-          <div class="cal-grid" id="cal-grid" aria-label="Calendar grid"></div>
-        </div>
-      </section>
+      <div class="cal-weekdays">
+        <div>Sun</div>
+        <div>Mon</div>
+        <div>Tue</div>
+        <div>Wed</div>
+        <div>Thu</div>
+        <div>Fri</div>
+        <div>Sat</div>
+      </div>
 
-      <!-- Event list -->
-      <aside>
-        <div class="event-panel">
-          <div class="event-panel-header">All Events</div>
-          <div id="event-list" aria-live="polite">
-            <p style="color:#666;font-size:.9rem">Loading events…</p>
-          </div>
-        </div>
-      </aside>
+      <div class="cal-grid" id="cal-grid" aria-label="Calendar grid"></div>
 
     </div>
+
+    <!-- Borough colour key -->
+    <div class="cal-legend" aria-label="Borough colour key">
+      <span class="cal-legend-label">Borough</span>
+      <span class="cal-legend-item">
+        <span class="cal-legend-dot" style="background:#d4660a"></span> Bronx
+      </span>
+      <span class="cal-legend-item">
+        <span class="cal-legend-dot" style="background:#3b4db5"></span> Brooklyn
+      </span>
+      <span class="cal-legend-item">
+        <span class="cal-legend-dot" style="background:#b52060"></span> Manhattan
+      </span>
+      <span class="cal-legend-item">
+        <span class="cal-legend-dot" style="background:#097b8a"></span> Queens
+      </span>
+      <span class="cal-legend-item">
+        <span class="cal-legend-dot" style="background:#6b2d99"></span> Staten Island
+      </span>
+      <span class="cal-legend-item">
+        <span class="cal-legend-dot" style="background:#7a8c82"></span> All Boroughs
+      </span>
+    </div>
+
   </main>
 
+  <!-- Event detail popup -->
+  <div id="cal-popup-overlay" class="cal-popup-overlay" role="dialog" aria-modal="true" aria-label="Event details">
+    <div id="cal-popup-content" class="cal-popup"></div>
+  </div>
+
   <footer class="site-footer">
-    NYC Environmental Justice Tracker &mdash; Built for community, by community.
+    <div>
+      <strong style="color:rgba(255,255,255,.75)">NYC Environmental Justice Community Engagement Tool</strong><br>
+      Tracking environmental justice across New York City's five boroughs.
+      Data sourced from local newsrooms and community organizations.
+      &nbsp;·&nbsp; <a href="index.html">News</a>
+      &nbsp;·&nbsp; <a href="map.html">Map</a>
+    </div>
   </footer>
 
-  <script type="module" src="js/calendar.js"></script>
+  <script src="data/events.js"></script>
+  <script src="js/calendar.js"></script>
   <script src="js/nav.js"></script>
 </body>
 </html>

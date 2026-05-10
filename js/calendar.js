@@ -1,147 +1,169 @@
-import { fetchJSON, boroughClass, categorySlug, setActiveNav } from './main.js';
+// EJ_EVENTS loaded from data/events.js via <script> tag in calendar.html
 
-setActiveNav();
+(function () {
 
-let allEvents = [];
-let currentYear, currentMonth;
-let activeCategory = 'All';
+  // Navigation bounds: May–July 2026 only
+  var MIN_MONTH = 4; // May (0-indexed)
+  var MAX_MONTH = 6; // July
+  var currentYear  = 2026;
+  var currentMonth = 4; // Start on May
 
-async function init() {
-  allEvents = await fetchJSON('data/events.json');
-  const today = new Date();
-  currentYear  = today.getFullYear();
-  currentMonth = today.getMonth(); // 0-indexed
-  renderFilters();
-  renderCalendar();
-  renderEventList();
-}
+  var BOROUGH_COLORS = {
+    'Bronx':         '#d4660a',
+    'Brooklyn':      '#3b4db5',
+    'Manhattan':     '#b52060',
+    'Queens':        '#097b8a',
+    'Staten Island': '#6b2d99',
+    'All':           '#7a8c82'
+  };
 
-/* ── Category filters ───────────────────────────────────────── */
-function renderFilters() {
-  const categories = ['All', 'Volunteer', 'Public Hearing', 'Town Hall', 'Workshop'];
-  const bar = document.getElementById('cal-filter-bar');
-  bar.innerHTML = categories.map(c => `
-    <button class="filter-btn ${c === activeCategory ? 'active' : ''}" data-cat="${c}">
-      ${c}
-    </button>
-  `).join('');
+  function pad(n) { return n < 10 ? '0' + n : String(n); }
 
-  bar.addEventListener('click', e => {
-    const btn = e.target.closest('.filter-btn');
-    if (!btn) return;
-    activeCategory = btn.dataset.cat;
-    bar.querySelectorAll('.filter-btn').forEach(b => b.classList.toggle('active', b === btn));
-    renderCalendar();
-    renderEventList();
-  });
-}
-
-/* ── Calendar grid ──────────────────────────────────────────── */
-function renderCalendar() {
-  const monthName = new Date(currentYear, currentMonth, 1)
-    .toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-  document.getElementById('cal-month-label').textContent = monthName;
-
-  const grid = document.getElementById('cal-grid');
-  const todayStr = new Date().toISOString().slice(0, 10);
-
-  const firstDay = new Date(currentYear, currentMonth, 1).getDay();
-  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-  const daysInPrev  = new Date(currentYear, currentMonth, 0).getDate();
-
-  const filtered = filteredEvents();
-
-  const cells = [];
-  /* leading cells from prev month */
-  for (let i = firstDay - 1; i >= 0; i--) {
-    cells.push({ day: daysInPrev - i, current: false });
-  }
-  /* current month */
-  for (let d = 1; d <= daysInMonth; d++) {
-    cells.push({ day: d, current: true });
-  }
-  /* trailing cells */
-  const trailing = 42 - cells.length;
-  for (let d = 1; d <= trailing; d++) {
-    cells.push({ day: d, current: false });
+  function formatLongDate(iso) {
+    var p = iso.split('-');
+    return new Date(+p[0], +p[1] - 1, +p[2]).toLocaleDateString('en-US', {
+      weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
+    });
   }
 
-  grid.innerHTML = cells.map(({ day, current }) => {
-    const dateStr = current
-      ? `${currentYear}-${String(currentMonth + 1).padStart(2,'0')}-${String(day).padStart(2,'0')}`
-      : null;
-    const dayEvents = dateStr ? filtered.filter(e => e.date === dateStr) : [];
-    const isToday = dateStr === todayStr;
+  // ── Render ────────────────────────────────────────────────────
+  function render() {
+    renderNav();
+    renderGrid();
+  }
 
-    const dotHtml = dayEvents.slice(0, 3).map(e => {
-      const slug = categorySlug(e.category);
-      return `<div class="cal-event-dot ${slug}" title="${e.title}">${e.title}</div>`;
+  function renderNav() {
+    var label = new Date(currentYear, currentMonth, 1)
+      .toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+    document.getElementById('cal-month-label').textContent = label;
+
+    var prevBtn = document.getElementById('cal-prev');
+    var nextBtn = document.getElementById('cal-next');
+    prevBtn.disabled = currentMonth <= MIN_MONTH;
+    nextBtn.disabled = currentMonth >= MAX_MONTH;
+  }
+
+  function renderGrid() {
+    var grid     = document.getElementById('cal-grid');
+    var todayStr = new Date().toISOString().slice(0, 10);
+    var firstDay    = new Date(currentYear, currentMonth, 1).getDay();
+    var daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+    var daysInPrev  = new Date(currentYear, currentMonth, 0).getDate();
+
+    // Build date → events lookup for this month
+    var byDate = {};
+    EJ_EVENTS.forEach(function (ev) {
+      if (!ev.date) return;
+      var p = ev.date.split('-');
+      if (+p[0] === currentYear && (+p[1] - 1) === currentMonth) {
+        if (!byDate[ev.date]) byDate[ev.date] = [];
+        byDate[ev.date].push(ev);
+      }
+    });
+
+    // Build 42 cells (6 rows × 7 cols)
+    var cells = [];
+    for (var i = firstDay - 1; i >= 0; i--) {
+      cells.push({ day: daysInPrev - i, current: false, dateStr: null });
+    }
+    for (var d = 1; d <= daysInMonth; d++) {
+      cells.push({
+        day: d,
+        current: true,
+        dateStr: currentYear + '-' + pad(currentMonth + 1) + '-' + pad(d)
+      });
+    }
+    var trailing = 42 - cells.length;
+    for (var t = 1; t <= trailing; t++) {
+      cells.push({ day: t, current: false, dateStr: null });
+    }
+
+    grid.innerHTML = cells.map(function (cell) {
+      var events  = cell.dateStr ? (byDate[cell.dateStr] || []) : [];
+      var isToday = cell.dateStr === todayStr;
+
+      var classes = ['cal-cell'];
+      if (!cell.current) classes.push('other-month');
+      if (isToday)       classes.push('today');
+      if (events.length) classes.push('has-events');
+
+      // Up to 2 event rows; "+N more" if overflow
+      var evHtml = events.slice(0, 2).map(function (ev) {
+        var color = BOROUGH_COLORS[ev.borough] || '#7a8c82';
+        return '<div class="cal-event" data-id="' + ev.id + '" role="button" tabindex="0" aria-label="' + ev.title + '">' +
+          '<span class="cal-dot" style="background:' + color + '"></span>' +
+          '<span class="cal-event-title">' + ev.title + '</span>' +
+          '</div>';
+      }).join('');
+
+      if (events.length > 2) {
+        evHtml += '<div class="cal-overflow">+' + (events.length - 2) + ' more</div>';
+      }
+
+      return '<div class="' + classes.join(' ') + '">' +
+        '<div class="cal-day-num">' + cell.day + '</div>' +
+        evHtml +
+        '</div>';
     }).join('');
 
-    return `<div class="cal-cell ${current ? '' : 'other-month'} ${isToday ? 'today' : ''} ${dayEvents.length ? 'has-events' : ''}"
-                 data-date="${dateStr ?? ''}">
-      <div class="cal-day-num">${day}</div>
-      ${dotHtml}
-    </div>`;
-  }).join('');
-
-  grid.addEventListener('click', e => {
-    const cell = e.target.closest('.cal-cell.has-events');
-    if (!cell || !cell.dataset.date) return;
-    scrollToEvent(cell.dataset.date);
-  });
-}
-
-function scrollToEvent(dateStr) {
-  const card = document.querySelector(`.event-card[data-date="${dateStr}"]`);
-  if (card) card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-}
-
-/* ── Event list ─────────────────────────────────────────────── */
-function renderEventList() {
-  const panel = document.getElementById('event-list');
-  const items = filteredEvents().sort((a, b) => a.date.localeCompare(b.date));
-
-  if (!items.length) {
-    panel.innerHTML = `<div class="empty-state"><div class="icon">📅</div><p>No events match this filter.</p></div>`;
-    return;
+    // Attach click + keyboard handlers to each event row
+    grid.querySelectorAll('.cal-event').forEach(function (el) {
+      function activate() {
+        var id = parseInt(el.dataset.id, 10);
+        var ev = EJ_EVENTS.find(function (e) { return e.id === id; });
+        if (ev) openPopup(ev);
+      }
+      el.addEventListener('click', function (e) { e.stopPropagation(); activate(); });
+      el.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); activate(); }
+      });
+    });
   }
 
-  panel.innerHTML = items.map(e => `
-    <div class="event-card" data-date="${e.date}">
-      <div class="event-card-header">
-        <span class="borough-badge ${boroughClass(e.borough)}">${e.borough}</span>
-        <span class="category-badge">${e.category}</span>
-      </div>
-      <h3>${e.title}</h3>
-      <div class="event-meta">
-        <span class="time">${e.date} · ${e.time}</span>
-        <span class="place">${e.location}</span>
-        <span class="org">${e.organizer}</span>
-      </div>
-      <p>${e.description}</p>
-      <a class="rsvp-btn" href="${e.rsvp}">RSVP / Learn more</a>
-    </div>
-  `).join('');
-}
+  // ── Popup ──────────────────────────────────────────────────────
+  function openPopup(ev) {
+    var color = BOROUGH_COLORS[ev.borough] || '#7a8c82';
 
-function filteredEvents() {
-  return activeCategory === 'All'
-    ? allEvents
-    : allEvents.filter(e => e.category === activeCategory);
-}
+    document.getElementById('cal-popup-content').innerHTML =
+      '<div class="popup-bar" style="background:' + color + '"></div>' +
+      '<button class="popup-close" id="popup-close-btn" aria-label="Close">&times;</button>' +
+      '<div class="popup-inner">' +
+        '<span class="popup-cat">' + ev.category + '</span>' +
+        '<h3 class="popup-title">' + ev.title + '</h3>' +
+        '<ul class="popup-meta">' +
+          '<li>&#128197; ' + formatLongDate(ev.date) + ' &middot; ' + ev.time + '</li>' +
+          '<li>&#128205; ' + ev.location + '</li>' +
+          '<li>&#127970; ' + ev.organizer + '</li>' +
+        '</ul>' +
+        '<p class="popup-desc">' + ev.description + '</p>' +
+        '<a class="popup-rsvp" href="' + ev.url + '">RSVP / Learn more &rarr;</a>' +
+      '</div>';
 
-/* ── Month navigation ───────────────────────────────────────── */
-document.getElementById('cal-prev').addEventListener('click', () => {
-  currentMonth--;
-  if (currentMonth < 0) { currentMonth = 11; currentYear--; }
-  renderCalendar();
-});
+    document.getElementById('cal-popup-overlay').classList.add('open');
+    document.getElementById('popup-close-btn').addEventListener('click', closePopup);
+    document.getElementById('popup-close-btn').focus();
+  }
 
-document.getElementById('cal-next').addEventListener('click', () => {
-  currentMonth++;
-  if (currentMonth > 11) { currentMonth = 0; currentYear++; }
-  renderCalendar();
-});
+  function closePopup() {
+    document.getElementById('cal-popup-overlay').classList.remove('open');
+  }
 
-init().catch(console.error);
+  // Close on backdrop click or Escape
+  document.getElementById('cal-popup-overlay').addEventListener('click', function (e) {
+    if (e.target === this) closePopup();
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') closePopup();
+  });
+
+  // ── Navigation ────────────────────────────────────────────────
+  document.getElementById('cal-prev').addEventListener('click', function () {
+    if (currentMonth > MIN_MONTH) { currentMonth--; render(); }
+  });
+  document.getElementById('cal-next').addEventListener('click', function () {
+    if (currentMonth < MAX_MONTH) { currentMonth++; render(); }
+  });
+
+  render();
+
+}());
