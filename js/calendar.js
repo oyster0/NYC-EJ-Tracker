@@ -136,7 +136,7 @@
           '<li>&#127970; ' + ev.organizer + '</li>' +
         '</ul>' +
         '<p class="popup-desc">' + ev.description + '</p>' +
-        '<a class="popup-rsvp" href="' + ev.url + '">RSVP / Learn more &rarr;</a>' +
+        '<a class="popup-rsvp" href="' + ev.url + '" target="_blank" rel="noopener noreferrer">RSVP / Learn more &rarr;</a>' +
       '</div>';
 
     document.getElementById('cal-popup-overlay').classList.add('open');

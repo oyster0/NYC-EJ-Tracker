@@ -29,7 +29,7 @@
       '<strong class="ej-popup-title">' + article.headline + '</strong>' +
       '<div class="ej-popup-meta">' + article.borough + ' &middot; ' + article.topic + '</div>' +
       '<div class="ej-popup-meta">' + article.source + ' &middot; ' + article.date + '</div>' +
-      '<a class="ej-popup-link" href="' + article.url + '">Read article &rarr;</a>' +
+      '<a class="ej-popup-link" href="' + article.url + '" target="_blank" rel="noopener noreferrer">Read article &rarr;</a>' +
       '</div>';
   }
 
@@ -40,7 +40,7 @@
       '<div class="ej-popup-meta">' + ev.date + ' &middot; ' + ev.time + '</div>' +
       '<div class="ej-popup-meta">' + ev.location + '</div>' +
       '<div class="ej-popup-meta">Org: ' + ev.organizer + '</div>' +
-      '<a class="ej-popup-link" href="' + ev.rsvp + '">RSVP / Learn more &rarr;</a>' +
+      '<a class="ej-popup-link" href="' + ev.url + '" target="_blank" rel="noopener noreferrer">RSVP / Learn more &rarr;</a>' +
       '</div>';
   }
 
