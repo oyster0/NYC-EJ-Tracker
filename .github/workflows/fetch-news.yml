@@ -1,0 +1,58 @@
+name: Fetch EJ News
+
+# Runs every day at 7 am Eastern Time (12:00 UTC, accounts for ET = UTC-5)
+# To adjust the schedule, change the cron expression below.
+# Cron syntax: minute hour day-of-month month day-of-week
+on:
+  schedule:
+    - cron: "0 12 * * *"   # 12:00 UTC = 7:00 AM ET (EST); adjust to "0 11 * * *" during EDT (UTC-4)
+
+  # Allow triggering manually from the Actions tab for testing
+  workflow_dispatch:
+
+permissions:
+  contents: write   # needed to push the updated data/news.js
+
+jobs:
+  fetch-and-commit:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Check out the repository
+      - name: Check out repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      # 2. Set up Python
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # 3. Install dependencies
+      - name: Install Python dependencies
+        run: pip install feedparser
+
+      # 4. Run the news fetcher
+      - name: Fetch latest EJ news
+        run: python scripts/fetch_news.py
+
+      # 5. Commit and push if data/news.js changed
+      - name: Commit updated news
+        run: |
+          git config user.name  "NYC EJ Bot"
+          git config user.email "bot@nyc-ej-net.org"
+
+          git add data/news.js
+
+          # Only commit if there are staged changes
+          if git diff --cached --quiet; then
+            echo "No changes to news.js — skipping commit."
+          else
+            DATESTAMP=$(date -u +"%Y-%m-%d %H:%M UTC")
+            git commit -m "chore: auto-update EJ news feed ($DATESTAMP)"
+            git push
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
