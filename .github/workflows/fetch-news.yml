@@ -10,6 +10,9 @@ on:
   # Allow triggering manually from the Actions tab for testing
   workflow_dispatch:
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 permissions:
   contents: write   # needed to push the updated data/news.js
 
