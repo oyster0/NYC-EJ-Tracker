@@ -161,9 +161,32 @@ NYC_REQUIRED_PATTERN = re.compile(
     re.IGNORECASE,
 )
 
+# Articles MUST contain at least one core EJ term to be included.
+# This blocks general NYC news (crime, sports, food, wildlife) that only
+# picks up points from borough name mentions or vague words like "community".
+CORE_EJ_PATTERN = re.compile(
+    r"environmental justice|air quality|air pollution|"
+    r"particulate matter|PM2\.5|PM10|"
+    r"toxic|contamination|hazardous waste|Superfund|"
+    r"pollut|emissions|diesel exhaust|"
+    r"water quality|sewage|sewer overflow|CSO|stormwater|"
+    r"flooding|flood risk|sea level|storm surge|"
+    r"heat island|extreme heat|"
+    r"wetland|habitat restoration|"
+    r"asthma|lead paint|lead pipe|lead exposure|"
+    r"greenhouse gas|carbon emissions|"
+    r"green infrastructure|renewable energy|"
+    r"zoning|land use|permit|SEQR|CEQR|environmental review|"
+    r"climate resilience|climate adaptation|"
+    r"overburdened|fence.?line|cumulative impact|disadvantaged community|"
+    r"public hearing|comment period|community board hearing|"
+    r"EPA|DEC\b|DEP\b|environmental law|environmental lawsuit",
+    re.IGNORECASE,
+)
+
 # Minimum weighted score an article must reach to be included.
 # Raising this filters out articles that only mention one EJ-adjacent word in passing.
-MIN_SCORE = 6
+MIN_SCORE = 10
 
 # Maximum article age in days
 MAX_AGE_DAYS = 28
@@ -300,7 +323,13 @@ def fetch_all() -> list[dict]:
                 print(f"    SKIP (not NYC): {headline[:60]}", file=sys.stderr)
                 continue
 
-            # Filter 3: must meet minimum EJ relevance score
+            # Filter 3: must contain at least one core EJ term
+            # Blocks general NYC news (crime, sports, food, wildlife, etc.)
+            if not CORE_EJ_PATTERN.search(combined):
+                print(f"    SKIP (no core EJ term): {headline[:60]}", file=sys.stderr)
+                continue
+
+            # Filter 4: must meet minimum EJ relevance score
             base_score = score_text(combined)
             if base_score < MIN_SCORE:
                 print(f"    SKIP (low score {base_score}): {headline[:60]}", file=sys.stderr)
