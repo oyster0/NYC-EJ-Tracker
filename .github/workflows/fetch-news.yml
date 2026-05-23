@@ -56,8 +56,19 @@ jobs:
           else
             DATESTAMP=$(date -u +"%Y-%m-%d %H:%M UTC")
             git commit -m "chore: auto-update EJ news feed ($DATESTAMP)"
-            git pull --rebase https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git main
-            git push https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git HEAD:main
+
+            # Retry push up to 3 times, rebasing against remote each attempt
+            REMOTE="https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git"
+            for attempt in 1 2 3; do
+              echo "Push attempt $attempt..."
+              git pull --rebase "$REMOTE" main
+              if git push "$REMOTE" HEAD:main; then
+                echo "Push succeeded on attempt $attempt."
+                break
+              fi
+              echo "Attempt $attempt failed. Waiting before retry..."
+              sleep $((attempt * 5))
+            done
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
