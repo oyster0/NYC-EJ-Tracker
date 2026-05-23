@@ -1,11 +1,11 @@
 name: Fetch EJ News
 
-# Runs every day at 7 am Eastern Time (12:00 UTC, accounts for ET = UTC-5)
+# Runs every day at 7 am Eastern Time (12:00 UTC)
 # To adjust the schedule, change the cron expression below.
 # Cron syntax: minute hour day-of-month month day-of-week
 on:
   schedule:
-    - cron: "0 12 * * *"   # 12:00 UTC = 7:00 AM ET (EST); adjust to "0 11 * * *" during EDT (UTC-4)
+    - cron: "0 12 * * *"   # 12:00 UTC = 7:00 AM ET (EST); use "0 11 * * *" for EDT
 
   # Allow triggering manually from the Actions tab for testing
   workflow_dispatch:
@@ -14,7 +14,7 @@ env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 permissions:
-  contents: write   # needed to push the updated data/news.js
+  contents: write   # needed to push data/news.js and feeds/*.xml
 
 jobs:
   fetch-and-commit:
@@ -34,25 +34,48 @@ jobs:
         with:
           python-version: "3.12"
 
-      # 3. Install dependencies
-      - name: Install Python dependencies
+      # 3. Install scraper dependencies
+      #    Separate from the RSS fetcher so adding new scrapers
+      #    only requires updating scrapers/requirements.txt
+      - name: Install scraper dependencies
+        run: pip install -r scrapers/requirements.txt
+
+      # 4. Run custom scrapers
+      #    Each individual scraper catches its own errors in run_all.py
+      #    and logs them without raising. continue-on-error here is a
+      #    belt-and-suspenders fallback so a total crash doesn't block
+      #    the news fetch that follows.
+      - name: Run custom scrapers
+        continue-on-error: true
+        run: |
+          echo "Running custom scrapers..."
+          python scrapers/run_all.py
+          echo "Scraper step complete. XML files in feeds/:"
+          ls feeds/*.xml 2>/dev/null || echo "  (no XML files generated)"
+
+      # 5. Install RSS fetcher dependency
+      - name: Install RSS fetcher dependencies
         run: pip install feedparser
 
-      # 4. Run the news fetcher
+      # 6. Run the news fetcher
+      #    Reads both the remote RSS_SOURCES list and any .xml files
+      #    that were just generated in feeds/ by the scrapers above.
       - name: Fetch latest EJ news
         run: python scripts/fetch_news.py
 
-      # 5. Commit and push if data/news.js changed
-      - name: Commit updated news
+      # 7. Commit and push if anything changed
+      - name: Commit updated files
         run: |
           git config user.name  "NYC EJ Bot"
           git config user.email "bot@nyc-ej-net.org"
 
+          # Stage news data and any generated feed XML files
           git add data/news.js
+          git add feeds/*.xml 2>/dev/null || true   # skip silently if feeds/ is empty
 
           # Only commit if there are staged changes
           if git diff --cached --quiet; then
-            echo "No changes to news.js — skipping commit."
+            echo "No changes — skipping commit."
           else
             DATESTAMP=$(date -u +"%Y-%m-%d %H:%M UTC")
             git commit -m "chore: auto-update EJ news feed ($DATESTAMP) [skip netlify]"
