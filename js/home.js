@@ -40,11 +40,11 @@
           '<span class="category-chip">' + story.topic + '</span>' +
           '<span class="card-date">' + date + '</span>' +
         '</div>' +
-        '<h3><a href="' + story.url + '">' + story.headline + '</a></h3>' +
+        '<h3><a href="' + story.url + '" target="_blank" rel="noopener noreferrer">' + story.headline + '</a></h3>' +
         '<p>' + story.summary + '</p>' +
         '<div class="card-footer">' +
           '<span class="card-source">' + story.source + '</span>' +
-          '<a class="card-readmore" href="' + story.url + '">Read more</a>' +
+          '<a class="card-readmore" href="' + story.url + '" target="_blank" rel="noopener noreferrer">Read more</a>' +
         '</div>' +
       '</article>';
     }).join('');
