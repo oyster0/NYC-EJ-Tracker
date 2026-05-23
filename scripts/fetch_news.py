@@ -270,16 +270,61 @@ def entry_id(entry, source_name: str) -> str:
 
 
 def summarise(entry) -> str:
-    """Best available summary text, stripped of HTML, capped at 200 chars."""
+    """
+    Extract a clean 1–2 sentence summary from an RSS entry.
+    Strips HTML, removes common boilerplate, and returns the first
+    1–2 complete sentences capped at 280 characters.
+    """
+    # Try the most descriptive fields first
     raw = (
         getattr(entry, "summary", "")
         or getattr(entry, "description", "")
+        or getattr(entry, "content", [{}])[0].get("value", "")
         or ""
     )
+
     text = clean_html(raw)
-    if len(text) > 200:
-        text = text[:197].rsplit(" ", 1)[0] + "…"
-    return text
+
+    # Strip common RSS boilerplate patterns
+    boilerplate = [
+        r"^by\s+[\w\s\.]+[,·]\s*",                          # "By Jane Smith, "
+        r"^[\w\s\.]+\s*[|·—]\s*",                           # "Jane Smith | " or "The City — "
+        r"\bContinue reading[^\n]*",                         # "Continue reading…"
+        r"\bRead (more|the full story|article)[^\n]*",       # "Read more →"
+        r"\bClick here[^\n]*",                               # "Click here to…"
+        r"\b(Subscribe|Sign up) (to|for)[^\n]*",             # subscription prompts
+        r"\(Photo[^\)]*\)",                                  # "(Photo: Jane Smith)"
+        r"\[[\w\s]+\]",                                      # "[VIDEO]", "[PHOTOS]"
+        r"\s*The post .+ appeared first on .+\.",            # WordPress syndication footer
+        r"\s*This (article|story|post) (originally )?appeared[^\n]*",
+    ]
+    for pattern in boilerplate:
+        text = re.sub(pattern, " ", text, flags=re.IGNORECASE).strip()
+
+    # Collapse any new whitespace gaps left by stripping
+    text = re.sub(r"\s+", " ", text).strip()
+
+    # Extract the first 1–2 complete sentences (split on . ! ?)
+    sentences = re.split(r"(?<=[.!?])\s+", text)
+    summary = ""
+    for sentence in sentences:
+        if not sentence.strip():
+            continue
+        candidate = (summary + " " + sentence).strip() if summary else sentence
+        if len(candidate) > 280:
+            break
+        summary = candidate
+        # Stop after 2 sentences
+        if len(re.split(r"(?<=[.!?])\s+", summary)) >= 2:
+            break
+
+    # Fallback: if sentence splitting failed, hard-cap at 280 chars
+    if not summary:
+        summary = text
+    if len(summary) > 280:
+        summary = summary[:277].rsplit(" ", 1)[0] + "…"
+
+    return summary
 
 
 # ── Main ───────────────────────────────────────────────────────────────────────
