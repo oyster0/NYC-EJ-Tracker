@@ -11,7 +11,7 @@ import json
 import re
 import sys
 import hashlib
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 try:
@@ -145,6 +145,29 @@ KEYWORD_SCORES = [
     (r"environmental review|SEQR|CEQR", 4),
 ]
 
+# ── Filters ───────────────────────────────────────────────────────────────────
+# Articles MUST mention NYC or a borough/neighbourhood to be included.
+# This prevents out-of-state stories (e.g. Mississippi) from slipping through.
+NYC_REQUIRED_PATTERN = re.compile(
+    r"\bNYC\b|New York City|New York, N\.?Y\.?|"
+    r"\bBronx\b|South Bronx|Hunts Point|Mott Haven|Port Morris|Soundview|Tremont|Fordham|Riverdale|"
+    r"\bBrooklyn\b|Red Hook|Gowanus|Sunset Park|Bushwick|Canarsie|East New York|Williamsburg|"
+    r"Crown Heights|Bay Ridge|Flatbush|Bed.Stuy|"
+    r"\bManhattan\b|East Harlem|West Harlem|Washington Heights|Inwood|Chinatown|"
+    r"Lower East Side|Financial District|Midtown|Upper West Side|Upper East Side|"
+    r"\bQueens\b|Jamaica Bay|Rockaway|Flushing|Maspeth|Astoria|Long Island City|"
+    r"Ozone Park|Howard Beach|"
+    r"Staten Island|Port Richmond|North Shore|Tottenville|St\. George",
+    re.IGNORECASE,
+)
+
+# Minimum weighted score an article must reach to be included.
+# Raising this filters out articles that only mention one EJ-adjacent word in passing.
+MIN_SCORE = 6
+
+# Maximum article age in days
+MAX_AGE_DAYS = 28
+
 # ── Borough Inference ──────────────────────────────────────────────────────────
 BOROUGH_PATTERNS = [
     ("Bronx",         r"\bBronx\b|South Bronx|Hunts Point|Mott Haven|Port Morris|Soundview|Tremont|Fordham|Riverdale"),
@@ -197,16 +220,24 @@ def infer_topic(text: str) -> str:
     return "Environmental Justice"
 
 
-def parse_date(entry) -> str:
-    """Return ISO date string YYYY-MM-DD, falling back to today."""
+def parse_date(entry) -> tuple[str, datetime]:
+    """Return (ISO date string YYYY-MM-DD, datetime object), falling back to today."""
     for attr in ("published_parsed", "updated_parsed"):
         t = getattr(entry, attr, None)
         if t:
             try:
-                return datetime(*t[:3]).strftime("%Y-%m-%d")
+                dt = datetime(*t[:3], tzinfo=timezone.utc)
+                return dt.strftime("%Y-%m-%d"), dt
             except Exception:
                 pass
-    return datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    now = datetime.now(timezone.utc)
+    return now.strftime("%Y-%m-%d"), now
+
+
+def is_too_old(dt: datetime, max_days: int = MAX_AGE_DAYS) -> bool:
+    """Return True if the article is older than max_days."""
+    cutoff = datetime.now(timezone.utc) - timedelta(days=max_days)
+    return dt < cutoff
 
 
 def entry_id(entry, source_name: str) -> str:
@@ -255,12 +286,25 @@ def fetch_all() -> list[dict]:
             headline = clean_html(getattr(entry, "title", ""))
             summary  = summarise(entry)
             link     = getattr(entry, "link", "#") or "#"
-            date_str = parse_date(entry)
+            date_str, pub_dt = parse_date(entry)
 
             combined = headline + " " + summary
+
+            # Filter 1: must be recent (within MAX_AGE_DAYS)
+            if is_too_old(pub_dt):
+                print(f"    SKIP (too old: {date_str}): {headline[:60]}", file=sys.stderr)
+                continue
+
+            # Filter 2: must mention NYC or a borough/neighbourhood
+            if not NYC_REQUIRED_PATTERN.search(combined):
+                print(f"    SKIP (not NYC): {headline[:60]}", file=sys.stderr)
+                continue
+
+            # Filter 3: must meet minimum EJ relevance score
             base_score = score_text(combined)
-            if base_score == 0:
-                continue  # no EJ relevance at all — skip
+            if base_score < MIN_SCORE:
+                print(f"    SKIP (low score {base_score}): {headline[:60]}", file=sys.stderr)
+                continue
 
             weighted_score = base_score * weight
 
