@@ -55,7 +55,7 @@ jobs:
             echo "No changes to news.js — skipping commit."
           else
             DATESTAMP=$(date -u +"%Y-%m-%d %H:%M UTC")
-            git commit -m "chore: auto-update EJ news feed ($DATESTAMP)"
+            git commit -m "chore: auto-update EJ news feed ($DATESTAMP) [skip netlify]"
 
             # Retry push up to 3 times, rebasing against remote each attempt
             REMOTE="https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git"
